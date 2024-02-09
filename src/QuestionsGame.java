@@ -83,14 +83,32 @@ public class QuestionsGame {
 	public void play() {
 		Scanner scanner = new Scanner(System.in);
 		QuestionNode node = overallRoot;
+		QuestionNode prev = overallRoot;
+		boolean left;
+		System.out.println(node.data+" (y/n)?");
+		String ans = scanner.nextLine().trim().toLowerCase();
+		if(ans.startsWith("y")) {
+			node = node.left;
+			left = true;
+		}
+		else {
+			node = node.right;
+			left = false;
+		}
 		while(node.left!=null&&node.right!=null) {
+			if(left)
+				prev = prev.left;
+			else
+				prev = prev.right;
 			System.out.println(node.data+" (y/n)?");
-			String ans = scanner.nextLine().trim().toLowerCase();
+			ans = scanner.nextLine().trim().toLowerCase();
 			if(ans.startsWith("y")) {
 				node = node.left;
+				left = true;
 			}
 			else {
 				node = node.right;
+				left = false;
 			}
 		}
 		String first = node.data;
@@ -104,20 +122,16 @@ public class QuestionsGame {
 			System.out.println("Boo! I lose. Please Help me get better!");
 			System.out.println("What is your object?");
 			input = scanner.nextLine();
-			System.out.println("Please give me a yes/no question that distinguishes between "+node.data+" and "+input);
+			System.out.println("Please give me a yes/no question that distinguishes between "+first+" and "+input);
 			String newQues = scanner.nextLine();
 			System.out.println("Is the answer \"yes\" for "+input+"? (y/n)? ");
 			String quest = scanner.nextLine();
-			QuestionNode temp = node;
-			node = new QuestionNode(newQues);
-			if(quest.toLowerCase().trim().startsWith("y")) {
-				node.left = new QuestionNode(input);
-				node.right = new QuestionNode(first);
-			}
-			else {
-				node.right = new QuestionNode(input);
-				node.left = new QuestionNode(first);
-			}
+			QuestionNode temp = new QuestionNode(node.data);
+			if(prev.left == node)
+				prev.left = quest.toLowerCase().trim().startsWith("y")?new QuestionNode(newQues, new QuestionNode(input), new QuestionNode(first)):new QuestionNode(newQues, new QuestionNode(first), new QuestionNode(input));
+			else
+				prev.right = quest.toLowerCase().trim().startsWith("y")?new QuestionNode(newQues, new QuestionNode(first), new QuestionNode(input)):new QuestionNode(newQues, new QuestionNode(input), new QuestionNode(first));
+
 		}
 	}
 
